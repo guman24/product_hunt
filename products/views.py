@@ -17,17 +17,21 @@ def create(request):
             product.title=request.POST['title']
             product.product_desc=request.POST['product_desc']
             product.image=request.FILES['product_image']
-            product.icon=request.FILES['product_icon']
+            product.product_icon=request.FILES['product_icon']
             if request.POST['product_url'].startswith('https://') or request.POST['product_url'].startswith('http://'):
                 product.url=request.POST['product_url']
             else:
-                product.url="http://"+request.POST['product_url']
+                product.url="https://"+request.POST['product_url']
             product.timestamp=timezone.datetime.now()
             product.hunter=request.user
             product.save()
-            return redirect('home')
+            return redirect('/product/'+str(product.id))
         else:
             return render(request,'product/create.html',{'error':"Fill all the fields"})
     else:
         return render(request,'product/create.html')
+    
+def detail(request,product_id):
+    product=ProductModel.objects.get(id=product_id)
+    return render(request,'product/detail.html',{'products':product})
     
